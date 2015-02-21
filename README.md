@@ -10,7 +10,9 @@
 
 ### parameters
 
-*This widget has no parameter*
+- **timezone**: Name of the timezone, like `America/Los_Angeles`.
+  Find all the values from http://momentjs.com/timezone/
+  Optional, defaults to local time.
 
 ### usage
 
