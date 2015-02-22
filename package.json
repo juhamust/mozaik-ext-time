@@ -16,7 +16,8 @@
   "homepage": "https://github.com/plouc/mozaik-ext-time",
   "dependencies": {
     "d3": "^3.5.5",
-    "moment-timezone": "^0.3.0"
+    "moment-timezone": "^0.3.0",
+    "react-addons": "^0.9.1-deprecated"
   },
   "main": "./components.js",
   "scripts": {
