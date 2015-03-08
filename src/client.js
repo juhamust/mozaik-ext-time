@@ -1,3 +1,4 @@
+var chalk   = require('chalk');
 var request = require('superagent');
 var Promise = require('bluebird');
 var cache   = require('memory-cache');
@@ -8,13 +9,13 @@ require('superagent-bluebird-promise');
  * @param {Mozaik} context
  */
 var client = function (context) {
-    context.logger.info('Create client');
-
     return {
         // Fetch sunset and coordinate info
         info: function (params) {
-            context.logger.info('info client');
-            console.log('== INFO ', params);
+            // If city info is not provided, no backend info is needed
+            if (!params.city || params.city.length === 0) {
+                return Promise.resolve();
+            }
 
             var cacheKey = format('time.info.{timezone}', params);
             if (cache.get(cacheKey) !== null) {
@@ -28,7 +29,7 @@ var client = function (context) {
                 .then(function (res) {
                     // Check if response seem valid
                     if (!res.body.sys) {
-                        context.logger.warn('Failed to find location info');
+                        context.logger.error(chalk.red('Failed to find location info for', params.city));
                         return res.body
                     }
                     // Cache the response for 12h hours

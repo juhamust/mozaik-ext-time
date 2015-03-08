@@ -40,10 +40,11 @@ var Clock = React.createClass({
     ],
 
     getInitialState() {
-        var initialState     = getCurrentTimeParts(this.props.timezone);
+        var initialState;
 
-        initialState.sunRise = initialState.moment.clone().hours(6).minutes(0);
-        initialState.sunSet  = initialState.moment.clone().hours(18).minutes(0);
+        initialState = getCurrentTimeParts(this.props.timezone);
+        initialState.sunRise = initialState.moment.clone().hours(6).minutes(0).seconds(0);
+        initialState.sunSet  = initialState.moment.clone().hours(18).minutes(0).seconds(0);
 
         return initialState;
     },
@@ -55,12 +56,13 @@ var Clock = React.createClass({
 
     getApiRequest() {
         var params = {
-            city:     this.props.city || this.props.timezone.replace(/\w+\//, ''),
+            // Pick the city from timezone if not defined and available
+            city:     this.props.city || (this.props.timezone || '').replace(/\w+\//, ''),
             timezone: this.props.timezone
         };
 
         return {
-            id: format('time.info.{city}.{country}', params),
+            id: format('time.info.{timezone}.{city}', params),
             params: params
         };
     },
@@ -90,7 +92,7 @@ var Clock = React.createClass({
             transform: `rotate(${ secondsScale(this.state.seconds) }deg)`
         };
 
-        console.log((this.props.city || this.props.timezone), this.state.sunRise.format(), '-', this.state.sunSet.format());
+        //console.log((this.props.city || this.props.timezone), this.state.sunRise.format(), '-', this.state.sunSet.format());
 
         // Day/night indicator
         var isDay = this.state.moment.isBetween(this.state.sunRise, this.state.sunSet);
@@ -104,6 +106,7 @@ var Clock = React.createClass({
         // Textual field, defaults to config value
         var infoFields = {
             timezone: this.props.timezone ? this.props.timezone.replace(/\w+\//, '').replace('_', ' ') : this.props.timezone,
+            sun:  this.state.sunRise.format('LT') + ' - ' + this.state.sunSet.format('LT'),
             date: this.state.moment.format('ll'),
             time: this.state.moment.format('LT')
         };
